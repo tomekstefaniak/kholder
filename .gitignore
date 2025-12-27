@@ -14,3 +14,6 @@ __pycache__/
 # DB SQLite files
 *.sqlite3
 **/*.env
+
+# Static files collected
+staticfiles/
