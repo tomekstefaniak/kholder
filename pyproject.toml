@@ -13,6 +13,7 @@ authors = [{ name = "Tomasz Stefaniak", email = "tomek@goldfishgateway.com" }]
 dependencies = [
     "python-dotenv>=0.21.0",
     "django>=4.2",
+    'drf_spectacular>=0.28.1',
     "cryptography>=40.0.0",
     "gunicorn>=21.2.0",
     "whitenoise>=6.0.0",
