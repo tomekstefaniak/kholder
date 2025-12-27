@@ -1,0 +1,222 @@
+openapi: 3.0.3
+info:
+  title: KHolder API
+  version: 1.0.0
+
+paths:
+  /keys/:
+    get:
+      summary: List keys
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [label, decrypted_key, password]
+              properties:
+                label:
+                  type: string
+                decrypted_key:
+                  type: string
+                password:
+                  type: string
+              example:
+                label: "my-key"
+                decrypted_key: "my-secret"
+                password: "strongpassword"
+      responses:
+        "201":
+          description: Created
+
+  /keys/decrypt/{label}:
+    post:
+      summary: Decrypt key
+      description: Decrypt the stored encrypted key for `label`. Provide the `password` in the JSON body.
+      parameters:
+        - name: label
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+              example:
+                password: "strongpassword"
+      responses:
+        "200":
+          description: Decrypted key returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  decrypted_key:
+                    type: string
+              example:
+                decrypted_key: "my-secret-value"
+        "400":
+          description: Invalid input (e.g. invalid JSON)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Invalid password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /keys/{label}:
+    patch:
+      summary: Update key label or value
+      parameters:
+        - name: label
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+                decrypted_key:
+                  type: string
+                password:
+                  type: string
+              description: "Provide `label` to rename, or `decrypted_key` with `password` to update value. At least one must be present."
+              example:
+                label: "new-label"
+                decrypted_key: "new-secret"
+                password: "strongpassword"
+      responses:
+        "200":
+          description: Key updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                success:
+                  value:
+                    message: "Key updated successfully"
+        "400":
+          description: Invalid input or label exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "405":
+          description: Unsupported HTTP method
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete key
+      description: Delete the key identified by `label`. This operation does not require a password.
+      parameters:
+        - name: label
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Key deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Key deleted successfully"
+        "404":
+          description: Key not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Key:
+      type: object
+      properties:
+        label:
+          type: string
+        encrypted_key:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      example:
+        label: "my-key"
+        encrypted_key: "<encrypted-value>"
+        created_at: "2026-01-01T12:00:00Z"
+        updated_at: "2026-01-01T12:00:00Z"
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: "Description of the error"
+  
