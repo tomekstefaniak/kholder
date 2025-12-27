@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kholder"
+version = "0.1.0"
+description = "Local password-secured key holder working on unix domain socket"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Tomasz Stefaniak", email = "tomek@goldfishgateway.com" }]
+dependencies = [
+    "python-dotenv>=0.21.0",
+    "django>=4.2",
+    "cryptography>=40.0.0",
+    "gunicorn>=21.2.0",
+    "whitenoise>=6.0.0",
+]
+
+[tool.setuptools]
+packages = ["kholder"]
+
+[project.optional-dependencies]
+dev = ["black", "ruff"]
