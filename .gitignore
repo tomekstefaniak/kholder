@@ -1,0 +1,16 @@
+# Python virtual environment
+venv
+
+# Metadata files
+kholder.egg-info
+
+# Build files
+build
+
+# Byte code files
+__pycache__/
+*.pyc
+
+# DB SQLite files
+*.sqlite3
+**/*.env
